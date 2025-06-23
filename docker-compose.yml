@@ -3,18 +3,26 @@ version: '3.9'
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "/wait-for-postgres.sh db
+        python manage.py migrate &&
+        python create_superuser.py &&
+        python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      POSTGRES_DB: sistema
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: clave
 
   db:
     image: postgres:14
-    ports:                        # 👈 Añadido para acceso externo
-      - "5432:5432"               # 👈 Esto permite conexión desde DBeaver
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
