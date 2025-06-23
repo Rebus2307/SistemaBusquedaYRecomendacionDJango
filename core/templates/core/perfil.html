@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+    <h2>Mi perfil</h2>
+
+    <p><strong>Correo:</strong> {{ usuario.email }}</p>
+    <p><strong>Nombre:</strong> {{ usuario.nombre }} {{ usuario.apellidos }}</p>
+    <p><strong>Rol:</strong> {% if usuario.is_superuser %}Administrador{% else %}Usuario{% endif %}</p>
+
+    {% if usuario.foto_perfil %}
+        <img src="{{ usuario.foto_perfil.url }}" width="150" />
+    {% endif %}
+
+    <h3>Editar perfil</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+    </form>
+
+    <hr>
+    <form method="POST" action="{% url 'eliminar_cuenta' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar tu cuenta?');">
+            Eliminar cuenta
+        </button>
+    </form>
+{% endblock %}

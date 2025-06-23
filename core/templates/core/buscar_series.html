@@ -1,0 +1,9 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Buscar series</h2>
+<ul>
+    {% for serie in series %}
+        <li>{{ serie.titulo }} - {{ serie.genero }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

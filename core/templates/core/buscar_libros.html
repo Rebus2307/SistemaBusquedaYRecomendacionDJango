@@ -1,0 +1,9 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Buscar libros</h2>
+<ul>
+    {% for libro in libros %}
+        <li>{{ libro.titulo }} - {{ libro.autor }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

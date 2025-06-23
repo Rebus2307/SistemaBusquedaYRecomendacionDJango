@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Mis favoritos</h2>
+
+<h3>Libros</h3>
+<ul>
+    {% for libro in libros_favoritos %}
+        <li>{{ libro.titulo }} - {{ libro.autor }}</li>
+    {% empty %}
+        <li>No tienes libros favoritos.</li>
+    {% endfor %}
+</ul>
+
+<h3>Películas/Series</h3>
+<ul>
+    {% for pelicula in peliculas_favoritas %}
+        <li>{{ pelicula.titulo }}</li>
+    {% empty %}
+        <li>No tienes películas/series favoritas.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

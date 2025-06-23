@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Bienvenido</title>
-</head>
-<body>
-    <h1>¡Bienvenido, {{ request.user.nombre }}!</h1>
-    <p><a href="{% url 'logout' %}">Cerrar sesión</a></p>
-</body>
-</html>
+{% extends 'core/base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <h2>¡Bienvenido, {{ request.user.nombre }}!</h2>
+    
+    <p>¿Qué te gustaría hacer?</p>
+
+    <ul>
+        <li><a href="{% url 'perfil' %}">Editar mi perfil</a></li>
+        <li><a href="{% url 'buscar_libros' %}">Buscar libros</a></li>
+        <li><a href="{% url 'buscar_series' %}">Buscar series</a></li>
+        <li><a href="{% url 'favoritos' %}">Ver mis favoritos</a></li>
+    </ul>
+{% endblock %}
