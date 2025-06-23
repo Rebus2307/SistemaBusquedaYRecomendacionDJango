@@ -327,18 +327,47 @@ def agregar_favorito_pelicula(request, serie_id):
 # Vista de favoritos (libros y series)
 @login_required
 def favoritos_view(request):
-    try:
-        libros_favoritos = LibroFavorito.objects.filter(usuario=request.user).order_by('-fecha_guardado')
-        peliculas_favoritas = PeliculaFavorita.objects.filter(usuario=request.user).order_by('-fecha_guardado')
-        
-        return render(request, 'core/favoritos.html', {
-            'libros_favoritos': libros_favoritos,
-            'peliculas_favoritas': peliculas_favoritas
-        })
-    except Exception as e:
-        logger.error(f"Error al cargar favoritos: {e}")
-        messages.error(request, 'Error al cargar tus favoritos.')
-        return render(request, 'core/favoritos.html', {
-            'libros_favoritos': [],
-            'peliculas_favoritas': []
-        })
+    usuario = request.user
+    libros_favoritos = LibroFavorito.objects.filter(usuario=usuario)
+    series_favoritas = PeliculaFavorita.objects.filter(usuario=usuario)
+
+    # Recomendaciones de libros (por autor del primer favorito)
+    recomendaciones_libros = []
+    if libros_favoritos.exists():
+        autor = libros_favoritos.first().autor
+        url = f"https://openlibrary.org/search.json?author={autor}"
+        resp = requests.get(url)
+        if resp.status_code == 200:
+            data = resp.json()
+            for doc in data.get("docs", [])[:5]:
+                recomendaciones_libros.append({
+                    "titulo": doc.get("title"),
+                    "autor": ", ".join(doc.get("author_name", [])),
+                    "portada": f"https://covers.openlibrary.org/b/olid/{doc.get('cover_edition_key', '')}-M.jpg" if doc.get("cover_edition_key") else "",
+                })
+
+    # Recomendaciones de series (por género del primer favorito)
+    recomendaciones_series = []
+    if series_favoritas.exists():
+        show_id = series_favoritas.first().show_id
+        show_resp = requests.get(f"https://api.tvmaze.com/shows/{show_id}")
+        if show_resp.status_code == 200:
+            show_data = show_resp.json()
+            if show_data.get("genres"):
+                genre = show_data["genres"][0]
+                genre_resp = requests.get(f"https://api.tvmaze.com/search/shows?q={genre}")
+                if genre_resp.status_code == 200:
+                    for item in genre_resp.json()[:5]:
+                        show = item["show"]
+                        recomendaciones_series.append({
+                            "titulo": show["name"],
+                            "imagen": show["image"]["medium"] if show.get("image") else "",
+                            "resumen": show.get("summary", ""),
+                        })
+
+    return render(request, "core/favoritos.html", {
+        "libros_favoritos": libros_favoritos,
+        "series_favoritas": series_favoritas,
+        "recomendaciones_libros": recomendaciones_libros,
+        "recomendaciones_series": recomendaciones_series,
+    })

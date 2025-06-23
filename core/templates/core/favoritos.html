@@ -3,7 +3,6 @@
 <div class="row">
     <div class="col-md-12">
         <h2>Mis favoritos</h2>
-        
         <div class="row">
             <div class="col-md-6">
                 <h3>Libros</h3>
@@ -35,21 +34,21 @@
             
             <div class="col-md-6">
                 <h3>Series</h3>
-                {% if peliculas_favoritas %}
-                    {% for pelicula in peliculas_favoritas %}
+                {% if series_favoritas %}
+                    {% for serie in series_favoritas %}
                         <div class="card mb-3">
                             <div class="row no-gutters">
-                                {% if pelicula.imagen_url %}
+                                {% if serie.imagen_url %}
                                     <div class="col-md-4">
-                                        <img src="{{ pelicula.imagen_url }}" class="card-img" alt="{{ pelicula.titulo }}" style="height: 150px; object-fit: cover;">
+                                        <img src="{{ serie.imagen_url }}" class="card-img" alt="{{ serie.titulo }}" style="height: 150px; object-fit: cover;">
                                     </div>
                                 {% endif %}
                                 <div class="col-md-8">
                                     <div class="card-body">
-                                        <h5 class="card-title">{{ pelicula.titulo }}</h5>
+                                        <h5 class="card-title">{{ serie.titulo }}</h5>
                                         <p class="card-text">
-                                            {{ pelicula.resumen|safe|truncatewords:15 }}<br>
-                                            <small class="text-muted">Agregado: {{ pelicula.fecha_guardado|date:"d/m/Y" }}</small>
+                                            {{ serie.resumen|safe|truncatewords:15 }}<br>
+                                            <small class="text-muted">Agregado: {{ serie.fecha_guardado|date:"d/m/Y" }}</small>
                                         </p>
                                     </div>
                                 </div>
@@ -58,6 +57,51 @@
                     {% endfor %}
                 {% else %}
                     <div class="alert alert-info">No tienes series favoritas.</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3>Recomendaciones de Libros</h3>
+                {% if recomendaciones_libros %}
+                    <ul class="list-group">
+                        {% for libro in recomendaciones_libros %}
+                            <li class="list-group-item d-flex align-items-center">
+                                {% if libro.portada %}
+                                    <img src="{{ libro.portada }}" alt="Portada" width="50" class="me-3">
+                                {% endif %}
+                                <div>
+                                    <strong>{{ libro.titulo }}</strong><br>
+                                    <small>{{ libro.autor }}</small>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="alert alert-secondary">No hay recomendaciones de libros.</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <h3>Recomendaciones de Series</h3>
+                {% if recomendaciones_series %}
+                    <ul class="list-group">
+                        {% for serie in recomendaciones_series %}
+                            <li class="list-group-item d-flex align-items-center">
+                                {% if serie.imagen %}
+                                    <img src="{{ serie.imagen }}" alt="Imagen" width="50" class="me-3">
+                                {% endif %}
+                                <div>
+                                    <strong>{{ serie.titulo }}</strong><br>
+                                    <small>{{ serie.resumen|safe|truncatewords:10 }}</small>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="alert alert-secondary">No hay recomendaciones de series.</div>
                 {% endif %}
             </div>
         </div>
