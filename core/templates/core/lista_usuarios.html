@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Lista de usuarios</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Administrador</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.nombre }} {{ usuario.apellidos }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{% if usuario.is_superuser %}Sí{% else %}No{% endif %}</td>
+            <td>
+                <a href="{% url 'editar_usuario' usuario.id %}" class="btn btn-sm btn-primary">Editar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

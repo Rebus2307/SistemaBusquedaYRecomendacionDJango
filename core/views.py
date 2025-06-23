@@ -1,9 +1,9 @@
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django import forms
 from django.contrib import messages
 from django.http import JsonResponse
@@ -371,3 +371,31 @@ def favoritos_view(request):
         "recomendaciones_libros": recomendaciones_libros,
         "recomendaciones_series": recomendaciones_series,
     })
+
+
+# --- NUEVO: Vistas para administración de usuarios ---
+
+def es_admin(user):
+    return user.is_superuser
+
+@user_passes_test(es_admin)
+def lista_usuarios(request):
+    usuarios = Usuario.objects.all()
+    return render(request, "core/lista_usuarios.html", {"usuarios": usuarios})
+
+@user_passes_test(es_admin)
+def editar_usuario(request, usuario_id):
+    usuario = get_object_or_404(Usuario, id=usuario_id)
+    if request.method == "POST":
+        form = PerfilForm(request.POST, request.FILES, instance=usuario)
+        if form.is_valid():
+            form.save()
+            # Cambiar rol si se envía el campo is_superuser
+            if 'is_superuser' in request.POST:
+                usuario.is_superuser = request.POST.get('is_superuser') == 'on'
+                usuario.save()
+            messages.success(request, "Usuario actualizado correctamente.")
+            return redirect('lista_usuarios')
+    else:
+        form = PerfilForm(instance=usuario)
+    return render(request, "core/editar_usuario.html", {"form": form, "usuario": usuario})

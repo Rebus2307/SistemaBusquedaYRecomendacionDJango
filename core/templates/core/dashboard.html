@@ -11,5 +11,8 @@
         <li><a href="{% url 'buscar_libros' %}">Buscar libros</a></li>
         <li><a href="{% url 'buscar_series' %}">Buscar series</a></li>
         <li><a href="{% url 'favoritos' %}">Ver mis favoritos</a></li>
+        {% if request.user.is_superuser %}
+            <li><a href="{% url 'lista_usuarios' %}">Lista de usuarios</a></li>
+        {% endif %}
     </ul>
 {% endblock %}
