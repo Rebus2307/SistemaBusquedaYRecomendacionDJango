@@ -1,3 +1,4 @@
+import requests  # Asegúrate de importar el módulo requests
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -5,11 +6,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.contrib import messages
-from .forms import PerfilForm  # Agregamos el formulario de perfil
+from .forms import PerfilForm  # Asegúrate de que este formulario esté definido
 from .models import LibroFavorito, PeliculaFavorita
 
 Usuario = get_user_model()
-
 
 # Formulario personalizado de registro
 class RegistroForm(forms.ModelForm):
@@ -90,24 +90,69 @@ def eliminar_cuenta_view(request):
     return render(request, 'core/confirmar_eliminar.html')
 
 
-# Vista de búsqueda de libros (simple, por ahora)
+# Vista de búsqueda de libros (por título o autor)
 @login_required
 def buscar_libros_view(request):
-    libros = [
-        {'titulo': 'Cien años de soledad', 'autor': 'Gabriel García Márquez'},
-        {'titulo': 'El alquimista', 'autor': 'Paulo Coelho'},
-    ]
-    return render(request, 'core/buscar_libros.html', {'libros': libros})
+    query = request.GET.get('q', '')
+    libros = []
+
+    if query:
+        # Busca por título
+        response = requests.get(f'https://openlibrary.org/search.json?q={query}')
+        if response.status_code == 200:
+            libros = response.json().get('docs', [])
+        
+        # O busca por autor
+        response_author = requests.get(f'https://openlibrary.org/search.json?author={query}')
+        if response_author.status_code == 200:
+            libros += response_author.json().get('docs', [])
+
+    return render(request, 'core/buscar_libros.html', {'libros': libros, 'query': query})
 
 
-# Vista de búsqueda de series (simulada)
+# Vista de búsqueda de series
 @login_required
 def buscar_series_view(request):
-    series = [
-        {'titulo': 'Stranger Things', 'genero': 'Ciencia ficción'},
-        {'titulo': 'Breaking Bad', 'genero': 'Drama'},
-    ]
-    return render(request, 'core/buscar_series.html', {'series': series})
+    query = request.GET.get('q', '')
+    series = []
+
+    if query:
+        response = requests.get(f'https://api.tvmaze.com/search/shows?q={query}')
+        if response.status_code == 200:
+            series = response.json()
+
+    return render(request, 'core/buscar_series.html', {'series': series, 'query': query})
+
+
+# Vista de agregar libro a favoritos
+@login_required
+def agregar_favorito_libro(request, libro_id):
+    if request.method == 'POST':
+        response = requests.get(f'https://openlibrary.org/works/{libro_id}.json')
+        if response.status_code == 200:
+            data = response.json()
+            titulo = data.get('title')
+            autor = ', '.join([author['name'] for author in data.get('authors', [])])
+            isbn = data.get('isbn', [''])[0]
+            portada_url = f"http://covers.openlibrary.org/b/id/{data.get('covers', [None])[0]}-L.jpg" if data.get('covers') else None
+            LibroFavorito.objects.create(usuario=request.user, titulo=titulo, autor=autor, isbn=isbn, portada_url=portada_url)
+            messages.success(request, f"El libro {titulo} ha sido agregado a tus favoritos.")
+    return redirect('buscar_libros')
+
+
+# Vista de agregar película a favoritos
+@login_required
+def agregar_favorito_pelicula(request, serie_id):
+    if request.method == 'POST':
+        response = requests.get(f'https://api.tvmaze.com/shows/{serie_id}')
+        if response.status_code == 200:
+            data = response.json()
+            titulo = data.get('name')
+            imagen_url = data.get('image', {}).get('original', None)
+            resumen = data.get('summary', '')
+            PeliculaFavorita.objects.create(usuario=request.user, titulo=titulo, show_id=serie_id, imagen_url=imagen_url, resumen=resumen)
+            messages.success(request, f"La serie {titulo} ha sido agregada a tus favoritos.")
+    return redirect('buscar_series')
 
 
 # Vista de favoritos (libros y series)

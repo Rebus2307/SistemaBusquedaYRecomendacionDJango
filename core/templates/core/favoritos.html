@@ -14,7 +14,7 @@
 <h3>Películas/Series</h3>
 <ul>
     {% for pelicula in peliculas_favoritas %}
-        <li>{{ pelicula.titulo }}</li>
+        <li>{{ pelicula.titulo }} - {{ pelicula.resumen }}</li>
     {% empty %}
         <li>No tienes películas/series favoritas.</li>
     {% endfor %}

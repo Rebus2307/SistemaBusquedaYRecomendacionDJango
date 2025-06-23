@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 
-
+# Usuario Manager
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, nombre, password=None, **extra_fields):
         if not email:
@@ -20,6 +20,7 @@ class UsuarioManager(BaseUserManager):
         return self.create_user(email, nombre, password, **extra_fields)
 
 
+# Usuario
 class Usuario(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     nombre = models.CharField(max_length=50)
@@ -39,6 +40,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+# Modelo de libros favoritos
 class LibroFavorito(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='libros_favoritos')
     titulo = models.CharField(max_length=255)
@@ -51,6 +53,7 @@ class LibroFavorito(models.Model):
         return f"{self.titulo} ({self.usuario.email})"
 
 
+# Modelo de películas favoritas
 class PeliculaFavorita(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='peliculas_favoritas')
     titulo = models.CharField(max_length=255)

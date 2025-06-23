@@ -1,9 +1,20 @@
 {% extends 'core/base.html' %}
 {% block content %}
 <h2>Buscar libros</h2>
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Buscar libros por título o autor..." />
+    <button type="submit">Buscar</button>
+</form>
 <ul>
     {% for libro in libros %}
-        <li>{{ libro.titulo }} - {{ libro.autor }}</li>
+        <li>
+            {{ libro.title }} - {{ libro.author }}
+            <!-- Aquí pasamos directamente el libro.key -->
+            <form method="POST" action="{% url 'agregar_favorito_libro' libro.key %}">
+                {% csrf_token %}
+                <button type="submit">Agregar a favoritos</button>
+            </form>
+        </li>
     {% endfor %}
 </ul>
 {% endblock %}

@@ -1,9 +1,19 @@
 {% extends 'core/base.html' %}
 {% block content %}
 <h2>Buscar series</h2>
+<form method="get">
+    <input type="text" name="q" value="{{ query }}" placeholder="Buscar series..." />
+    <button type="submit">Buscar</button>
+</form>
 <ul>
     {% for serie in series %}
-        <li>{{ serie.titulo }} - {{ serie.genero }}</li>
+        <li>
+            {{ serie.name }} - {{ serie.genres|join:", " }}
+            <form method="POST" action="{% url 'agregar_favorito_pelicula' serie.id %}">
+                {% csrf_token %}
+                <button type="submit">Agregar a favoritos</button>
+            </form>
+        </li>
     {% endfor %}
 </ul>
 {% endblock %}
