@@ -15,33 +15,89 @@
         {% if libros %}
             <div class="row">
                 {% for libro in libros %}
-                    <div class="col-md-6 mb-3">
-                        <div class="card">
-                            <div class="card-body">
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            {% if libro.cover_url %}
+                                <img src="{{ libro.cover_url }}" 
+                                     class="card-img-top" 
+                                     alt="{{ libro.title }}" 
+                                     style="height: 300px; object-fit: cover;"
+                                     onerror="this.style.display='none';">
+                            {% else %}
+                                <div class="card-img-top d-flex align-items-center justify-content-center bg-light" 
+                                     style="height: 300px;">
+                                    <div class="text-center text-muted">
+                                        <i class="fas fa-book fa-3x mb-2"></i>
+                                        <p>Sin portada disponible</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="card-body d-flex flex-column">
                                 <h5 class="card-title">{{ libro.title }}</h5>
-                                <p class="card-text">
+                                <p class="card-text flex-grow-1">
                                     <strong>Autor:</strong> {{ libro.author }}<br>
                                     {% if libro.first_publish_year %}
                                         <strong>Año:</strong> {{ libro.first_publish_year }}<br>
                                     {% endif %}
                                     {% if libro.isbn %}
-                                        <strong>ISBN:</strong> {{ libro.isbn }}
+                                        <strong>ISBN:</strong> {{ libro.isbn }}<br>
+                                    {% endif %}
+                                    {% if libro.subjects %}
+                                        <strong>Géneros:</strong> {{ libro.subjects }}
                                     {% endif %}
                                 </p>
-                                <form method="POST" action="{% url 'agregar_favorito_libro' libro.key %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-success btn-sm">Agregar a favoritos</button>
-                                </form>
+                                <div class="mt-auto">
+                                    <form method="POST" action="{% url 'agregar_favorito_libro' libro.key %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm btn-block">
+                                            <i class="fas fa-heart"></i> Agregar a favoritos
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
+            
+            {% if libros|length == 20 %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 
+                    Mostrando los primeros 20 resultados. Refina tu búsqueda para obtener resultados más específicos.
+                </div>
+            {% endif %}
+            
         {% elif query %}
-            <div class="alert alert-info">
-                No se encontraron libros para "{{ query }}"
+            <div class="alert alert-warning">
+                <i class="fas fa-search"></i> 
+                No se encontraron libros para "<strong>{{ query }}</strong>". 
+                Intenta con otros términos de búsqueda.
             </div>
         {% endif %}
     </div>
 </div>
+
+<!-- Agregar Font Awesome para los iconos (opcional) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-img-top {
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+</style>
 {% endblock %}

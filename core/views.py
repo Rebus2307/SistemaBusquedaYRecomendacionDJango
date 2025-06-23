@@ -116,8 +116,7 @@ def eliminar_cuenta_view(request):
         return redirect('login')
     return render(request, 'core/confirmar_eliminar.html')
 
-
-# Vista de búsqueda de libros
+# Vista de búsqueda de libros (versión mejorada en core/views.py)
 @login_required
 def buscar_libros_view(request):
     query = request.GET.get('q', '').strip()
@@ -141,13 +140,18 @@ def buscar_libros_view(request):
             
             # Procesar los resultados
             for doc in docs:
+                # Construir URL de la portada
+                cover_url = None
+                if doc.get('cover_i'):
+                    cover_url = f"https://covers.openlibrary.org/b/id/{doc.get('cover_i')}-L.jpg"
+                
                 libro = {
                     'key': doc.get('key', '').replace('/works/', ''),
                     'title': doc.get('title', 'Título no disponible'),
                     'author': ', '.join(doc.get('author_name', [])) or 'Autor desconocido',
                     'first_publish_year': doc.get('first_publish_year', ''),
                     'isbn': doc.get('isbn', [''])[0] if doc.get('isbn') else '',
-                    'cover_url': f"https://covers.openlibrary.org/b/id/{doc.get('cover_i')}-M.jpg" if doc.get('cover_i') else None,
+                    'cover_url': cover_url,  # Esta es la clave importante
                     'subjects': ', '.join(doc.get('subject', [])[:3]) if doc.get('subject') else ''
                 }
                 libros.append(libro)
@@ -163,7 +167,6 @@ def buscar_libros_view(request):
         'libros': libros, 
         'query': query
     })
-
 
 # Vista de búsqueda de series
 @login_required
