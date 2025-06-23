@@ -1,19 +1,55 @@
 {% extends 'core/base.html' %}
 {% block content %}
-<h2>Buscar series</h2>
-<form method="get">
-    <input type="text" name="q" value="{{ query }}" placeholder="Buscar series..." />
-    <button type="submit">Buscar</button>
-</form>
-<ul>
-    {% for serie in series %}
-        <li>
-            {{ serie.name }} - {{ serie.genres|join:", " }}
-            <form method="POST" action="{% url 'agregar_favorito_pelicula' serie.id %}">
-                {% csrf_token %}
-                <button type="submit">Agregar a favoritos</button>
-            </form>
-        </li>
-    {% endfor %}
-</ul>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Buscar series</h2>
+        <form method="get" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar series..." />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+        </form>
+        
+        {% if series %}
+            <div class="row">
+                {% for serie in series %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            {% if serie.image %}
+                                <img src="{{ serie.image }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ serie.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ serie.name }}</h5>
+                                <p class="card-text">
+                                    {% if serie.genres %}
+                                        <strong>Géneros:</strong> {{ serie.genres|join:", " }}<br>
+                                    {% endif %}
+                                    {% if serie.premiered %}
+                                        <strong>Estreno:</strong> {{ serie.premiered }}<br>
+                                    {% endif %}
+                                    {% if serie.rating != 'N/A' %}
+                                        <strong>Rating:</strong> {{ serie.rating }}/10
+                                    {% endif %}
+                                </p>
+                                {% if serie.summary %}
+                                    <p class="card-text">{{ serie.summary|safe|truncatewords:20 }}</p>
+                                {% endif %}
+                                <form method="POST" action="{% url 'agregar_favorito_pelicula' serie.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">Agregar a favoritos</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elif query %}
+            <div class="alert alert-info">
+                No se encontraron series para "{{ query }}"
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

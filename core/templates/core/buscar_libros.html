@@ -1,20 +1,47 @@
 {% extends 'core/base.html' %}
 {% block content %}
-<h2>Buscar libros</h2>
-<form method="get">
-    <input type="text" name="q" value="{{ query }}" placeholder="Buscar libros por título o autor..." />
-    <button type="submit">Buscar</button>
-</form>
-<ul>
-    {% for libro in libros %}
-        <li>
-            {{ libro.title }} - {{ libro.author }}
-            <!-- Aquí pasamos directamente el libro.key -->
-            <form method="POST" action="{% url 'agregar_favorito_libro' libro.key %}">
-                {% csrf_token %}
-                <button type="submit">Agregar a favoritos</button>
-            </form>
-        </li>
-    {% endfor %}
-</ul>
+<div class="row">
+    <div class="col-md-12">
+        <h2>Buscar libros</h2>
+        <form method="get" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Buscar libros por título o autor..." />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+        </form>
+        
+        {% if libros %}
+            <div class="row">
+                {% for libro in libros %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ libro.title }}</h5>
+                                <p class="card-text">
+                                    <strong>Autor:</strong> {{ libro.author }}<br>
+                                    {% if libro.first_publish_year %}
+                                        <strong>Año:</strong> {{ libro.first_publish_year }}<br>
+                                    {% endif %}
+                                    {% if libro.isbn %}
+                                        <strong>ISBN:</strong> {{ libro.isbn }}
+                                    {% endif %}
+                                </p>
+                                <form method="POST" action="{% url 'agregar_favorito_libro' libro.key %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success btn-sm">Agregar a favoritos</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elif query %}
+            <div class="alert alert-info">
+                No se encontraron libros para "{{ query }}"
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
