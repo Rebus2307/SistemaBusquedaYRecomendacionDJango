@@ -18,7 +18,10 @@ class UsuarioRegistroSerializer(serializers.ModelSerializer):
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ('id', 'email', 'nombre', 'apellidos', 'fecha_nacimiento', 'foto_perfil')
+        fields = (
+            'id', 'email', 'nombre', 'apellidos', 'fecha_nacimiento',
+            'foto_perfil', 'is_staff', 'is_superuser'
+        )
 
 class LibroFavoritoSerializer(serializers.ModelSerializer):
     class Meta:
