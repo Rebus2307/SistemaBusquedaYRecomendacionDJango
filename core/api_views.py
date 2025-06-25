@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions
-from .models import Usuario, LibroFavorito, SerieFavorita
-from .serializers import UsuarioSerializer, LibroFavoritoSerializer, SerieFavoritaSerializer
+from .models import Usuario, LibroFavorito, PeliculaFavorita
+from .serializers import UsuarioSerializer, LibroFavoritoSerializer, PeliculaFavoritaSerializer
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
@@ -12,7 +12,7 @@ class LibroFavoritoViewSet(viewsets.ModelViewSet):
     serializer_class = LibroFavoritoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class SerieFavoritaViewSet(viewsets.ModelViewSet):
-    queryset = SerieFavorita.objects.all()
-    serializer_class = SerieFavoritaSerializer
+class PeliculaFavoritaViewSet(viewsets.ModelViewSet):
+    queryset = PeliculaFavorita.objects.all()
+    serializer_class = PeliculaFavoritaSerializer
     permission_classes = [permissions.IsAuthenticated]

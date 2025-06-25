@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Usuario, LibroFavorito, SerieFavorita
+from core.models import Usuario, LibroFavorito, PeliculaFavorita
 
 class UsuarioRegistroSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -25,7 +25,7 @@ class LibroFavoritoSerializer(serializers.ModelSerializer):
         model = LibroFavorito
         fields = '__all__'
 
-class SerieFavoritaSerializer(serializers.ModelSerializer):
+class PeliculaFavoritaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SerieFavorita
+        model = PeliculaFavorita
         fields = '__all__'
