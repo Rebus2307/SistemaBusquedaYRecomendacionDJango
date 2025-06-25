@@ -19,7 +19,6 @@ class UsuarioManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, nombre, password, **extra_fields)
 
-
 # Usuario
 class Usuario(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
@@ -39,6 +38,25 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+# Modelo general de Libro
+class Libro(models.Model):
+    titulo = models.CharField(max_length=255)
+    autor = models.CharField(max_length=255, blank=True)
+    isbn = models.CharField(max_length=20, blank=True)
+    portada_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.titulo
+
+# Modelo general de Serie
+class Serie(models.Model):
+    titulo = models.CharField(max_length=255)
+    descripcion = models.TextField(blank=True)
+    show_id = models.IntegerField(null=True, blank=True)  # ID externo si lo usas
+    imagen_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.titulo
 
 # Modelo de libros favoritos
 class LibroFavorito(models.Model):
@@ -51,7 +69,6 @@ class LibroFavorito(models.Model):
 
     def __str__(self):
         return f"{self.titulo} ({self.usuario.email})"
-
 
 # Modelo de películas favoritas
 class PeliculaFavorita(models.Model):
