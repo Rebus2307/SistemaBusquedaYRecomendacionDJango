@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from core.views import (
     register_view, login_view, dashboard_view, logout_view, perfil_view, eliminar_cuenta_view, 
     buscar_libros_view, buscar_series_view, favoritos_view, agregar_favorito_libro,
@@ -19,4 +19,5 @@ urlpatterns = [
     path('agregar-favorito-pelicula/<int:serie_id>/', agregar_favorito_pelicula, name='agregar_favorito_pelicula'),
     path('usuarios/', lista_usuarios, name='lista_usuarios'),
     path('usuarios/editar/<int:usuario_id>/', editar_usuario, name='editar_usuario'),
+    path('api/', include('core.api_urls')),
 ]

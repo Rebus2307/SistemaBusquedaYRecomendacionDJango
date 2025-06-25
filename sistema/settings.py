@@ -147,3 +147,10 @@ TIME_ZONE = 'America/Mexico_City'
 AUTH_USER_MODEL = 'core.Usuario'
 
 TEMPLATES[0]['DIRS'] = [BASE_DIR / 'core' / 'templates']
+
+# Configuración de Django REST Framework con JWT
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
