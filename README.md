@@ -49,6 +49,16 @@ Este proyecto es una aplicación web desarrollada con **Django** que permite a l
 
 ---
 
+## 💻​ Capturas
+
+![Login](https://github.com/user-attachments/assets/d86c0ad9-eab0-4a44-9252-31d295a7ae77)
+![Register](https://github.com/user-attachments/assets/da819bed-e69b-449a-8409-46b1f16e4050)
+![Dashboard](https://github.com/user-attachments/assets/0f3a935d-951d-414f-b890-e41af174de6d)
+![BuscarLibros](https://github.com/user-attachments/assets/7cf72481-07a4-49be-afc7-5babc2ee53bc)
+![FavoritosYRecomendaciones](https://github.com/user-attachments/assets/4998718f-1891-412e-9a43-a836ab5fe872)
+
+---
+
 ## 👨‍💻 Autor
 
 Proyecto realizado para la materia de Ingeniería de Software en **ESCOM**.
